@@ -15,26 +15,41 @@ int randomNumber(int max, int min){
 
 double avgCacheTime(int array[],int size){
 	struct timespec start, end;
-	double total = 0;
-	
+	double total = array[0];
+
 	clock_gettime(CLOCK_MONOTONIC, &start);
 	
 	for(int i = 0; i < size; i++){
-		total += array[1];	
+		total += array[0];
 	}
 	
 	clock_gettime(CLOCK_MONOTONIC, &end);
 	
-	return (((double)end.tv_nsec) - ((double)start.tv_nsec)) / size;
+	return (((double)end.tv_nsec) - ((double)start.tv_nsec))/size;
 }
 
+
+double avgMainMemoryTime(int array[], int size){
+	struct timespec start, end;
+	double total = array[0];
+	
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	
+	for(int i = 512; i < size; i= i * 2){
+		total += array[i];	
+	}
+	
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	
+	return (((double)end.tv_nsec) - ((double)start.tv_nsec))/16;
+}
 
 
 int main(int argc, char** argv){
 	srand(time(NULL));
 	
 	//creating array of a size specified here
-	int size = 10000000;
+	int size = 67108864;
 	int* array = (int*) malloc(sizeof(int) * size);
 	
 	
@@ -43,7 +58,9 @@ int main(int argc, char** argv){
 		array[i] = randomNumber(0,50);
 	}
 	
-	printf("%f\n", avgCacheTime(array,size));
+	printf("mm: %f\n", avgMainMemoryTime(array,size));
+	printf("cm: %f\n", avgCacheTime(array,size));
+	
 	
 
 }
